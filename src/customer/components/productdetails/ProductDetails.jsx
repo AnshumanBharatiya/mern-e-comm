@@ -6,6 +6,7 @@ import { Box, Button, Grid, LinearProgress } from '@mui/material';
 import ProductReviewCard from './ProductReviewCard';
 import { mens_kurta } from '../../../data/mens_kurta'
 import ProductCard from '../product/ProductCard'
+import { useNavigate } from 'react-router-dom';
 
 const product = {
   name: 'Men Printed Pure Cotton Straight Kurta',
@@ -64,6 +65,11 @@ function classNames(...classes) {
 export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState(product.colors[0])
   const [selectedSize, setSelectedSize] = useState(product.sizes[2])
+
+  const navigate = useNavigate();
+  const handelAddToCart = () => {
+    navigate(`/cart`);
+  }
 
   return (
     <div className="bg-white px-5 lg:px-20">
@@ -232,7 +238,7 @@ export default function ProductDetails() {
                             </RadioGroup>
                             </fieldset>
                         </div>
-                        <Button variant='contained' sx={{px:"2rem", py:"1rem", bgcolor:"#9155fd", mt:"1rem"}}>
+                        <Button variant='contained' sx={{px:"2rem", py:"1rem", bgcolor:"#9155fd", mt:"1rem"}} onClick={handelAddToCart}>
                             Add To Cart
                         </Button>
                         </form>
