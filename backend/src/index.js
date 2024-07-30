@@ -1,13 +1,9 @@
 const express = require('express');
 const cors = require("cors");
+const authRouters = require('./routes/auth.route');
+const userRouters = require('./routes/user.route');
 
-// const createConnection = require('./connections');
 const app = express();
-// const PORT = process.env.PORT || 8000;
-
-// createConnection('mongodb://localhost:27017/node')
-// .then(() => console.log('Mongodb Connected Succesfully'))
-// .catch((err) => console.log("Something Went Wrong", err.message));
 
 // app.use(express.urlencoded({extended:false}));
 app.use(express.json());
@@ -20,6 +16,7 @@ app.get('/', (req,res) => {
     })
 });
 
-module.exports = app;
+app.use('/auth', authRouters)
+app.use('/api/users', userRouters);
 
-// app.listen(PORT, () => console.log(`Server running on port http://localhost:${PORT}`));
+module.exports = app;
