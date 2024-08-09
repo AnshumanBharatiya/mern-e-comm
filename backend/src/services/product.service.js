@@ -9,8 +9,10 @@ const createProduct = async (reqData) => {
     if(!topLevel){
       topLevel = new CATEGORY({
         name:reqData.topLevelCategory,
-        lavel:1
+        level:1
       })
+
+      await topLevel.save();
     }
     
     let secondLevel = await CATEGORY.findOne({name:reqData.secondLevelCategory, parentCategory : topLevel._id});
@@ -19,8 +21,9 @@ const createProduct = async (reqData) => {
       secondLevel = new CATEGORY({
         name:reqData.secondLevelCategory,
         parentCategory : topLevel._id,
-        lavel:2
+        level:2
       })
+      await secondLevel.save();
     }
 
     let thirdLevel = await CATEGORY.findOne({name:reqData.thirdLevelCategory, parentCategory : secondLevel._id});
@@ -29,8 +32,9 @@ const createProduct = async (reqData) => {
       thirdLevel = new CATEGORY({
         name:reqData.thirdLevelCategory,
         parentCategory : secondLevel._id,
-        lavel:3
+        level:3
       })
+      await thirdLevel.save();
     }
 
     const product = new PRODUCT({
@@ -77,6 +81,8 @@ const findProductById = async (productId) => {
     if(!product){
       throw new Error("Product not Found with id : ", productId);
     }
+
+    return product;
     
   } catch (error) {
     throw new Error(error.message);
@@ -92,7 +98,7 @@ const getAllProducts = async (reqQuery) =>{
   if(category){
     const existcategory = await CATEGORY.findOne({name:category});
     if(existcategory){
-      query = await query.where("category").equals(existcategory._id);
+      query =  query.where("category").equals(existcategory._id);
     }else{
       return {content:[], curentPage : 1, totalPages : 0}
     }
@@ -101,20 +107,20 @@ const getAllProducts = async (reqQuery) =>{
   if(color){
     const colorSet = new Set(color.split(",").map(color => color.trim().toLowerCase()));
     const colorRegex = colorSet.size > 0 ? new RegExp([...colorSet].join("|"), "i") : null;
-    query = await query.where("color").regex(colorRegex)
+    query =  query.where("color").regex(colorRegex)
   }
 
   if(sizes){
     const sizesSet = new Set(sizes);
-    query = await query.where("sizes.name").in([...sizesSet]);
+    query =  query.where("sizes.name").in([...sizesSet]);
   }
 
   if(minPrice && maxPrice){
-    query = await query.where('discountedPrice').gte(minPrice).lte(maxPrice);
+    query =  query.where('discountedPrice').gte(minPrice).lte(maxPrice);
   }
 
   if(minDiscount){
-    query = await query.where('discountedPercent').gt(minDiscount);
+    query =  query.where('discountedPercent').gt(minDiscount);
   }
 
   if(stock){
@@ -122,14 +128,14 @@ const getAllProducts = async (reqQuery) =>{
     if(stock === "in_stock"){
       query = query.where("quantity").gt(0);
     }else if(stock === "out_of_stock"){
-      query = await query.where("quantity").lt(1);
+      query =  query.where("quantity").lt(1);
     }
 
   }
 
   if(sort){
     const sortDirection = sort === "price_hight" ? -1 : 1;
-    query = await query.sort({discountedPrice:sortDirection});
+    query = query.sort({discountedPrice:sortDirection});
   }
 
   const totalProducts = await PRODUCT.countDocuments(query);
