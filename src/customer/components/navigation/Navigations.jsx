@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react"; //useEffect
+import { Fragment, useState, useEffect} from "react"; //
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -7,13 +7,13 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 
-import { Link, useNavigate } from "react-router-dom"; //useLocation
+import { Link, useNavigate, useLocation } from "react-router-dom"; //
 import { Avatar, Button, Menu, MenuItem } from "@mui/material";
 import { navigation } from "./navigationMenu";
-// import AuthModal from "../Auth/AuthModal";
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deepPurple } from "@mui/material/colors";
-// import { getUser, logout } from "../../../Redux/Auth/Action";
+import AuthModal from "../../auth/AuthModal";
+import { getUser, logout } from "../../../state/Auth/Action";
 // import { getCart } from "../../../Redux/Customers/Cart/Action";
 
 function classNames(...classes) {
@@ -23,20 +23,29 @@ function classNames(...classes) {
 export default function Navigation() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  // const { auth, cart } = useSelector((store) => store);
-  // const [openAuthModal, setOpenAuthModal] = useState(false);
+  const dispatch = useDispatch();
+  const { auth } = useSelector((store) => store);//cart
+  const [openAuthModal, setOpenAuthModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
-  // const jwt = localStorage.getItem("jwt");
-  // const location = useLocation();
+  const jwt = localStorage.getItem("jwt");
+  const location = useLocation();
 
-  // useEffect(() => {
-  //   if (jwt) {
-  //     dispatch(getUser(jwt));
-  //     dispatch(getCart(jwt));
-  //   }
-  // }, [jwt]);
+  useEffect(() => {
+    if (jwt) {
+      dispatch(getUser(jwt));
+      // dispatch(getCart(jwt));
+    }
+  }, [jwt, auth.jwt]);
+
+  useEffect(() => {
+    if (auth.user) {
+      handleClose();
+    }
+    if (location.pathname === "/login" || location.pathname === "/register") {
+      navigate(-1);
+    }
+  }, [auth.user]);
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -45,30 +54,21 @@ export default function Navigation() {
     setAnchorEl(null);
   };
 
-  // const handleOpen = () => {
-  //   setOpenAuthModal(true);
-  // };
-  // const handleClose = () => {
-  //   setOpenAuthModal(false);
-  // };
+  const handleOpen = () => {
+    setOpenAuthModal(true);
+  };
+  const handleClose = () => {
+    setOpenAuthModal(false);
+  };
 
   const handleCategoryClick = (category, section, item, close) => {
     navigate(`/${category.id}/${section.id}/${item.id}`);
     close();
   };
 
-  // useEffect(() => {
-  //   if (auth.user) {
-  //     handleClose();
-  //   }
-  //   if (location.pathname === "/login" || location.pathname === "/register") {
-  //     navigate(-1);
-  //   }
-  // }, [auth.user]);
-
   const handleLogout = () => {
     handleCloseUserMenu();
-    // dispatch(logout());
+    dispatch(logout());
   };
   // const handleMyOrderClick = () => {
   //   handleCloseUserMenu();
@@ -407,8 +407,7 @@ export default function Navigation() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  {/* {auth.user ? ( */}
-                  {true ? (
+                  {auth.user ? (
                     <div>
                       <Avatar
                         className="text-white"
@@ -422,7 +421,7 @@ export default function Navigation() {
                           cursor: "pointer",
                         }}
                       >
-                        {/* {auth.user?.firstName[0].toUpperCase()} */}
+                        {auth.user?.firstName[0].toUpperCase()}
                       </Avatar>
                       {/* <Button
                         id="basic-button"
@@ -449,7 +448,7 @@ export default function Navigation() {
                     </div>
                   ) : (
                     <Button
-                      // onClick={handleOpen}
+                      onClick={handleOpen}
                       className="text-sm font-medium text-gray-700 hover:text-gray-800"
                     >
                       Signin
@@ -491,7 +490,7 @@ export default function Navigation() {
           </div>
         </nav>
       </header>
-      {/* <AuthModal handleClose={handleClose} open={openAuthModal} /> */}
+      <AuthModal handleClose={handleClose} open={openAuthModal} />
     </div>
   );
 }

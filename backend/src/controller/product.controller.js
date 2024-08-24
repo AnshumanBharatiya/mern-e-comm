@@ -33,6 +33,7 @@ const updateProduct = async (req, res) => {
 }
 
 const findProductById = async (req, res) => {
+    
     const productId = req.params.id;
     try {
         const product = await productService.findProductById(productId);

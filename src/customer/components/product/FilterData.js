@@ -24,11 +24,13 @@ export const filters = [
         name: 'Color',
         options: [
             { value: 'white', label: 'White', checked: false },
+            { value: 'black', label: 'Black', checked: false },
             { value: 'beige', label: 'Beige', checked: false },
             { value: 'blue', label: 'Blue', checked: false },
             { value: 'brown', label: 'Brown', checked: false },
             { value: 'green', label: 'Green', checked: false },
             { value: 'purple', label: 'Purple', checked: false },
+            { value: 'yellow', label: 'Yellow', checked: false },
         ],
     },
     {
@@ -76,6 +78,7 @@ export const singleFilter = [
             { value: '50', label: '50% and above', checked: false },
             { value: '60', label: '60% and above', checked: false },
             { value: '70', label: '70% and above', checked: false },
+            { value: '80', label: '80% and above', checked: false },
         ],
     },
     {

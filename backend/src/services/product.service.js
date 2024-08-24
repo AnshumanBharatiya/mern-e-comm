@@ -92,11 +92,18 @@ const findProductById = async (productId) => {
 const getAllProducts = async (reqQuery) =>{
   let {category, color, sizes, minPrice, maxPrice, minDiscount, sort, stock, pageNumber, pageSize} = reqQuery;
 
-  pageSize = pageSize || 10;
+  // Ensure pageNumber and pageSize are numbers and valid
+  pageNumber = Math.max(parseInt(pageNumber, 10) || 1, 1);
+  pageSize = Math.max(parseInt(pageSize, 10) || 10, 1);
+  minPrice = parseInt(minPrice) || 0;
+  maxPrice = parseInt(maxPrice) || Number.MAX_SAFE_INTEGER;
+
+  // console.log(reqQuery);
+  // pageSize = pageSize || 10;
 
   let query = PRODUCT.find().populate("category");
   if(category){
-    const existcategory = await CATEGORY.findOne({name:category});
+    const existcategory = await CATEGORY.findOne({ name: new RegExp(`^${category.trim()}$`, "i") });
     if(existcategory){
       query =  query.where("category").equals(existcategory._id);
     }else{
@@ -139,7 +146,7 @@ const getAllProducts = async (reqQuery) =>{
   }
 
   const totalProducts = await PRODUCT.countDocuments(query);
-  const skip = (pageNumber - 1) * pageSize;
+  const skip = (pageNumber - 1) * pageSize; 
   query = query.skip(skip).limit(pageSize);
   const products = await query.exec();
   const totalPages = Math.ceil(totalProducts/pageSize);

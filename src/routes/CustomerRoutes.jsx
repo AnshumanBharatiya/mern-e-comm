@@ -18,6 +18,8 @@ function CustomerRoutes() {
         </div>
         <Routes>
             <Route path='/' element={<Home/>}></Route>
+            <Route path='/login' element={<Home/>}></Route>
+            <Route path='/register' element={<Home/>}></Route>
             <Route path='/:lavelOne/:lavelTwo/:lavelThree' element={<Product/>}></Route>
             <Route path='/product/:productId' element={<ProductDetails/>}></Route>
             <Route path='/cart' element={<Cart/>}></Route>
