@@ -6,16 +6,16 @@ const ORDERITEM = require('../model/orderItems.model');
 
 const  createOrder = async (user, shippAddress) => {
     let address;
-
+    
     if(shippAddress._id){
-        address = await ADDRESS.findById(shippAddress._id);
+        address = await ADDRESS.findById(shippAddress._id).lean();
         // address = existAddress;
     }else{
         address = new ADDRESS(shippAddress);
-        address.user = user;
+        address.user = user._id;
         await address.save();
 
-        user.address.push(address);
+        user.address.push(address._id);
         await user.save();
     }
     const cart = await cartService.findUserCart(user._id);
@@ -35,13 +35,13 @@ const  createOrder = async (user, shippAddress) => {
     }
 
     const createdOrder = new ORDER({
-        user,
+        user: user,
         orderItems : orderItems,
         totalPrice : cart.totalPrice,
         totalDiscountedPrice : cart.totalDiscountPrice,
         discounte : cart.discount,
         totalItem : cart.totalItem,
-        shippingAddress : address,
+        shippingAddress: address,
     })
 
     const savedOrder = await createdOrder.save();

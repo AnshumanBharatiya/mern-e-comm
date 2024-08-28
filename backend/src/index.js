@@ -10,6 +10,7 @@ const cartRouters = require('./routes/cart.route');
 const cartItemRouters = require('./routes/cartItem.route');
 const ratingRouters = require('./routes/rating.route');
 const reviewRouters = require('./routes/review.route');
+const paymentRouters = require('./routes/payment.route');
 
 const app = express();
 
@@ -34,5 +35,6 @@ app.use('/api/cart', cartRouters);
 app.use('/api/cart_items', cartItemRouters);
 app.use('/api/ratings', ratingRouters);
 app.use('/api/reviews', reviewRouters);
+app.use('/api/payments', paymentRouters);
 
 module.exports = app;
